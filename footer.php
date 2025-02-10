@@ -2,63 +2,46 @@
 /**
  * The template for displaying the footer
  *
- * Contains the closing of the id=main div and all content after
- *
  * @package GWT
  * @since Government Website Template 2.0
  */
+
 ?>
 
+<!-- Agency Footer -->
+<?php
+$footer_sidebars = array('footer-1', 'footer-2', 'footer-3', 'footer-4');
+$has_active_sidebar = false;
 
-<!-- agency footer -->
-<?php if(is_active_sidebar('footer-1') || is_active_sidebar('footer-2') || is_active_sidebar('footer-3') ||
-is_active_sidebar('footer-4')): ?>
-<div id="footer" class="anchor" name="agencyfooter">
-    <div id="supplementary" class="row">
-        <?php if(is_active_sidebar('footer-1')): ?>
-        <div class="<?php govph_displayoptions( 'govph_position_agency_footer' ); ?>" role="complementary">
-            <?php do_action( 'before_sidebar' ); ?>
-            <?php dynamic_sidebar( 'footer-1' ) ?>
-        </div>
-        <?php endif; // if active footer-1 ?>
+foreach ($footer_sidebars as $sidebar) {
+    if (is_active_sidebar($sidebar)) {
+        $has_active_sidebar = true;
+        break;
+    }
+}
 
-        <?php if(is_active_sidebar('footer-2')): ?>
-        <div class="<?php govph_displayoptions( 'govph_position_agency_footer' ); ?>" role="complementary">
-            <?php do_action( 'before_sidebar' ); ?>
-            <?php dynamic_sidebar( 'footer-2' ) ?>
+if ($has_active_sidebar) : ?>
+    <div id="footer" class="anchor" name="agencyfooter" role="contentinfo" itemscope itemtype="https://schema.org/WPFooter">
+        <div id="supplementary" class="row">
+            <?php foreach ($footer_sidebars as $sidebar) : ?>
+                <?php if (is_active_sidebar($sidebar)) : ?>
+                    <div class="<?php govph_displayoptions('govph_position_agency_footer'); ?>" role="complementary">
+                        <?php do_action('before_sidebar'); ?>
+                        <?php dynamic_sidebar($sidebar); ?>
+                    </div>
+                <?php endif; ?>
+            <?php endforeach; ?>
         </div>
-        <?php endif; // if active footer-2 ?>
-
-        <?php if(is_active_sidebar('footer-3')): ?>
-        <div class="<?php govph_displayoptions( 'govph_position_agency_footer' ); ?>" role="complementary">
-            <?php do_action( 'before_sidebar' ); ?>
-            <?php dynamic_sidebar( 'footer-3' ) ?>
-        </div>
-        <?php endif; // if active footer-3 ?>
-
-        <?php if(is_active_sidebar('footer-4')): ?>
-        <div class="<?php govph_displayoptions( 'govph_position_agency_footer' ); ?>" role="complementary">
-            <?php do_action( 'before_sidebar' ); ?>
-            <?php dynamic_sidebar( 'footer-4' ) ?>
-        </div>
-        <?php endif; // if active footer-4 ?>
     </div>
-</div>
 <?php endif; ?>
 
-<!-- standard footer -->
+<!-- Standard Footer -->
 <div id="gwt-standard-footer"></div>
-<!-- end standard footer -->
 
-</div><!-- #off-canvass-content -->
-</div><!-- #off-canvass-wrapper inner -->
-</div><!-- #off-canvass-wrapper -->
-
-<!-- standard footer script -->
+<!-- Standard Footer Script -->
 <script type="text/javascript">
 (function(d, s, id) {
     var js, gjs = d.getElementById('gwt-standard-footer');
-
     js = d.createElement(s);
     js.id = id;
     js.src = "//gwhs.i.gov.ph/gwt-footer/footer.js";
@@ -66,7 +49,7 @@ is_active_sidebar('footer-4')): ?>
 }(document, 'script', 'gwt-footer-jsdk'));
 </script>
 
-<!-- philippine standard time script-->
+<!-- Philippine Standard Time Script -->
 <script type="text/javascript" id="gwt-pst">
 (function(d, eId) {
     var js, gjs = d.getElementById(eId);
@@ -80,11 +63,11 @@ var gwtpstReady = function() {
     var firstPst = new gwtpstTime('pst-time');
 }
 </script>
-<!-- end philippine standard time -->
 
 <?php wp_footer(); ?>
 
-<div><a href="#page" id="back-to-top" style="display: inline;"><i class="fa fa-arrow-circle-up fa-2x"></i></a></div>
-</body>
+<!-- Back-to-Top Button -->
+<div><a href="#page" id="back-to-top"><i class="fa fa-arrow-circle-up fa-2x"></i></a></div>
 
+</body>
 </html>

@@ -1,9 +1,46 @@
+/**
+ * Accessibility Desaturation Styles
+ * Applies a grayscale filter to the entire page for users who prefer reduced color contrast.
+ */
+
 body {
-    filter: grayscale(100%);
-    -webkit-filter: grayscale(100%);
-    -webkit-filter: grayscale(1);
-    -moz-filter: grayscale(100%);
-    -ms-filter: grayscale(100%);
-    -o-filter: grayscale(100%);
-    filter: gray;
+  /* Apply grayscale filter for modern browsers */
+  filter: grayscale(100%);
+  -webkit-filter: grayscale(100%); /* For WebKit-based browsers (e.g., Chrome, Safari) */
+  -moz-filter: grayscale(100%);    /* For older Firefox versions */
+  -ms-filter: grayscale(100%);     /* For Internet Explorer */
+  -o-filter: grayscale(100%);      /* For older Opera versions */
+
+  /* Fallback for older IE versions */
+  filter: gray;
+}
+
+/* Ensure images and media also appear desaturated */
+img,
+video,
+iframe {
+  filter: grayscale(100%);
+  -webkit-filter: grayscale(100%);
+  -moz-filter: grayscale(100%);
+  -ms-filter: grayscale(100%);
+  -o-filter: grayscale(100%);
+}
+
+/* Optional: Add a class to toggle desaturation dynamically */
+body.a11y-desaturate {
+  filter: grayscale(100%);
+  -webkit-filter: grayscale(100%);
+  -moz-filter: grayscale(100%);
+  -ms-filter: grayscale(100%);
+  -o-filter: grayscale(100%);
+}
+
+body.a11y-desaturate img,
+body.a11y-desaturate video,
+body.a11y-desaturate iframe {
+  filter: grayscale(100%);
+  -webkit-filter: grayscale(100%);
+  -moz-filter: grayscale(100%);
+  -ms-filter: grayscale(100%);
+  -o-filter: grayscale(100%);
 }

@@ -1,3 +1,11 @@
+/**
+ * Accessibility Font Size Adjustments
+ * Ensures text is scalable and readable for users with visual impairments.
+ */
+
+/**
+ * 1.0 - Global Font Scaling
+ */
 body,
 h4,
 h5,
@@ -11,17 +19,20 @@ textarea,
 legend,
 code,
 pre {
-  font-size: 115% !important;
+  font-size: clamp(1rem, 2vw, 1.15rem) !important; /* Responsive scaling */
   line-height: 1.4 !important;
 }
 
+/**
+ * 2.0 - Navbar Adjustments
+ */
 .navbar .nav li {
-  font-size: 75% !important;
+  font-size: clamp(0.75rem, 1.5vw, 0.9rem) !important;
   line-height: 1.5 !important;
 }
 
 .navbar input {
-  font-size: 75% !important;
+  font-size: clamp(0.75rem, 1.5vw, 0.9rem) !important;
   line-height: 1.5 !important;
 }
 
@@ -29,30 +40,41 @@ pre {
   line-height: 1 !important;
 }
 
+/**
+ * 3.0 - Accessibility Toolbar
+ */
 .a11y-toolbar ul li {
   line-height: 20px !important;
-  font-size: 75% !important;
+  font-size: clamp(0.75rem, 1.5vw, 0.9rem) !important;
 }
 
 .a11y-toolbar ul li a {
   line-height: 24px !important;
 }
 
-/** Added for gwt **/
+/**
+ * 4.0 - Main Navigation
+ */
 #main-nav a {
-  font-size: 80% !important;
+  font-size: clamp(0.8rem, 1.5vw, 1rem) !important;
 }
 
 #main-nav .name a {
-  font-size: 130% !important;
+  font-size: clamp(1.3rem, 2.5vw, 1.5rem) !important;
 }
 
+/**
+ * 5.0 - Footer Adjustments
+ */
 #standard-footer .columns h4,
 #standard-footer .columns a,
 #standard-footer .columns p {
-  font-size: 130% !important;
+  font-size: clamp(1.3rem, 2.5vw, 1.5rem) !important;
 }
 
+/**
+ * 6.0 - Entry Content
+ */
 .entry-wrapper {
-  font-size: 200% !important;
+  font-size: clamp(2rem, 4vw, 2.5rem) !important;
 }

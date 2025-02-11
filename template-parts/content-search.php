@@ -1,57 +1,72 @@
 <?php
 /**
- * The template part for displaying results in search pages
+ * Template part for displaying search results.
  *
- * @package GWT
- * @since Government Website Template 2.0
+ * @package GWT-WordPress
+ * @since 26.0.0
  */
 ?>
+<div class="gwt-post-box">
+    <article id="post-<?php the_ID(); ?>" <?php post_class('gwt-callout gwt-secondary'); ?> aria-labelledby="search-title-<?php the_ID(); ?>">
+        <?php
+        // Determine content width based on thumbnail and sidebars.
+        $has_thumbnail = has_post_thumbnail();
+        $content_class = 'gwt-large-12';
+        if ($has_thumbnail) {
+            $content_class = 'gwt-large-9';
+        }
+        if ($has_thumbnail && is_active_sidebar('left-sidebar') && is_active_sidebar('right-sidebar')) {
+            $content_class = 'gwt-large-12';
+        }
 
-<div class="post-box">
-    <article id="post-<?php the_ID(); ?>" <?php post_class('callout secondary'); ?>>
-
-        <?php 
-			$content_class = 'large-12';
-			if(has_post_thumbnail()) : 
-				$content_class = 'large-9';
-				the_post_thumbnail( 'large', array( 'class' => 'thumbnail') );
-			endif;
-			if (has_post_thumbnail() && is_active_sidebar('left-sidebar') && is_active_sidebar('right-sidebar')) :
-				$content_class = 'large-12';
-			endif;
-		?>
-
-        <div class="entry-wrapper <?php echo $content_class; ?> medium-12 small-12">
-            <!-- entry-header -->
-            <header class="entry-header">
-                <h2 class="entry-title"><a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a>
+        // Display post thumbnail if available.
+        if ($has_thumbnail) :
+            the_post_thumbnail('large', ['class' => 'gwt-thumbnail']);
+        endif;
+        ?>
+        <div class="gwt-entry-wrapper <?php echo esc_attr($content_class); ?> gwt-medium-12 gwt-small-12">
+            <!-- Entry Header -->
+            <header class="gwt-entry-header">
+                <h2 id="search-title-<?php the_ID(); ?>" class="gwt-entry-title">
+                    <a href="<?php the_permalink(); ?>" rel="bookmark"><?php the_title(); ?></a>
                 </h2>
-                <div class="entry-meta">
+                <div class="gwt-entry-meta" role="note">
                     <?php gwt_wp_posted_on(); ?>
                 </div>
             </header>
 
-
-            <!-- entry-summary entry-content -->
-            <?php if ( is_search() ) : // Only display Excerpts for Search ?>
-            <div class="entry-summary">
-                <?php the_excerpt(); ?>
-            </div>
-            <?php else : ?>
-            <div class="entry-content">
-                <?php the_excerpt(); ?>
+            <!-- Entry Summary -->
+            <div class="gwt-entry-summary">
                 <?php
-						wp_link_pages( array(
-							'before' => '<div class="page-links">' . __( 'Pages:', 'gwt_wp' ),
-							'after'  => '</div>',
-						) );
-					?>
-            </div>
-            <?php endif; ?>
+                // Display excerpt for search results.
+                the_excerpt();
 
-            <!-- footer entry-meta -->
-            <footer class="entry-meta">
-                <?php if ( 'post' == get_post_type() ) : // Hide category and tag text for pages on Search ?>
+                // Add "Read More" link.
+                printf(
+                    '<p><a href="%s" class="gwt-read-more">%s</a></p>',
+                    esc_url(get_permalink()),
+                    esc_html__('Read More', 'gwt-wordpress')
+                );
+                ?>
+            </div>
+
+            <!-- Entry Footer -->
+            <footer class="gwt-entry-footer">
+                <?php if ('post' === get_post_type()) : ?>
+                    <div class="gwt-entry-meta">
+                        <?php
+                        // Display categories and tags for posts.
+                        $categories_list = get_the_category_list(esc_html__(', ', 'gwt-wordpress'));
+                        if ($categories_list) {
+                            printf('<span class="gwt-categories">%s: %s</span>', esc_html__('Categories', 'gwt-wordpress'), $categories_list);
+                        }
+
+                        $tags_list = get_the_tag_list('', esc_html__(', ', 'gwt-wordpress'));
+                        if ($tags_list) {
+                            printf('<span class="gwt-tags">%s: %s</span>', esc_html__('Tags', 'gwt-wordpress'), $tags_list);
+                        }
+                        ?>
+                    </div>
                 <?php endif; ?>
             </footer>
         </div>

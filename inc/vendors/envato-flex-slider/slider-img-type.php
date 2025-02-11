@@ -1,113 +1,140 @@
 <?php
-define('CPT_NAME', "Slider Images");
-define('CPT_SINGLE', "Slider Image");
-define('CPT_TYPE', "slider-image");
-define('CPT_THUMB_SIZE', 500);
+/**
+ * Custom Post Type for Slider Images.
+ *
+ * @package GWT-WordPress
+ * @since 26.0.0
+ */
 
-add_theme_support('post-thumbnails', array('slider-image'));  
-  
-function efs_register() {  
-    $args = array(  
-        'label' => __(CPT_NAME),  
-        'singular_label' => __(CPT_SINGLE),  
-        'public' => true,  
-        'show_ui' => true,  
-        'capability_type' => 'post',  
-        'hierarchical' => false,  
-        'rewrite' => true,  
-        'supports' => array('title', 'editor', 'thumbnail'),
-        'public' => false,  // it's not public, it shouldn't have it's own permalink, and so on
-        'publicly_queryable' => true,  // you should be able to query it
-        'show_ui' => true,  // you should be able to edit it in wp-admin
-        'exclude_from_search' => true,  // you should exclude it from search results
-        'show_in_nav_menus' => false,  // you shouldn't be able to add it to menus
-        'has_archive' => false,  // it shouldn't have archive page
-        'rewrite' => false,  // it shouldn't have rewrite rules
-       );  
-  
-    register_post_type(CPT_TYPE , $args );  
-    set_post_thumbnail_size(CPT_THUMB_SIZE);
+// Define constants for the custom post type.
+define('EFS_CPT_NAME', __('Slider Images', 'gwt-wordpress'));
+define('EFS_CPT_SINGLE', __('Slider Image', 'gwt-wordpress'));
+define('EFS_CPT_TYPE', 'slider-image');
+define('EFS_CPT_THUMB_SIZE', 500);
+
+// Add support for post thumbnails.
+add_theme_support('post-thumbnails', [EFS_CPT_TYPE]);
+
+/**
+ * Register the custom post type.
+ */
+function efs_register() {
+    $args = [
+        'label' => EFS_CPT_NAME,
+        'singular_label' => EFS_CPT_SINGLE,
+        'public' => false, // Not publicly accessible.
+        'show_ui' => true, // Show in admin UI.
+        'exclude_from_search' => true, // Exclude from search results.
+        'show_in_nav_menus' => false, // Do not allow adding to menus.
+        'has_archive' => false, // No archive page.
+        'rewrite' => false, // No rewrite rules.
+        'supports' => ['title', 'thumbnail'], // Support title and thumbnail only.
+    ];
+
+    register_post_type(EFS_CPT_TYPE, $args);
+    set_post_thumbnail_size(EFS_CPT_THUMB_SIZE);
 }
-
 add_action('init', 'efs_register');
 
+/**
+ * Disable the editor for the custom post type.
+ */
 function efs_disable_editor() {
-    remove_post_type_support( CPT_TYPE, 'editor' );
+    remove_post_type_support(EFS_CPT_TYPE, 'editor');
 }
 add_action('init', 'efs_disable_editor');
 
 /**
- * Add meta box
+ * Add a meta box for slider links.
  *
- * @param post $post The post object
- * @link https://codex.wordpress.org/Plugin_API/Action_Reference/add_meta_boxes
+ * @param WP_Post $post The post object.
  */
-function slider_link_add_meta_boxes( $post ){
-  add_meta_box( 'slider_link_meta_box', __( 'Slider Link', 'efs_slider' ), 'slider_link_build_meta_box', CPT_TYPE, 'normal', 'low' );
+function efs_add_meta_boxes($post) {
+    add_meta_box(
+        'efs-slider-link-meta-box',
+        __('Slider Link', 'gwt-wordpress'),
+        'efs_build_meta_box',
+        EFS_CPT_TYPE,
+        'normal',
+        'low'
+    );
 }
-add_action( 'add_meta_boxes_slider-image', 'slider_link_add_meta_boxes' );
+add_action('add_meta_boxes_' . EFS_CPT_TYPE, 'efs_add_meta_boxes');
 
 /**
- * Build custom field meta box
+ * Build the meta box content.
  *
- * @param post $post The post object
+ * @param WP_Post $post The post object.
  */
-function slider_link_build_meta_box( $post ){
-  // make sure the form request comes from WordPress
-  wp_nonce_field( basename( __FILE__ ), 'slider_link_meta_box_nonce' );
+function efs_build_meta_box($post) {
+    // Add nonce field for security.
+    wp_nonce_field(basename(__FILE__), 'efs_slider_link_meta_box_nonce');
 
-  // retrieve the _slider_link current value
-  $slider_link = get_post_meta( $post->ID, '_slider_link', true );
-  ?>
-  <div class='inside'>
-    <div>
-      <input type="text" name="slider_link" value="<?php echo $slider_link; ?>" style="width: 100%;" />
-      <p>Enter the URL Linked to the slider image if any.<br/>To link internal path copy the permalink without the base URL. e.g. <strong>/2017/10/03/article-link</strong><br/> To link to external path add http:// or https:// at the beginning of the URL. e.g. <strong>http://example.com</strong></p>
+    // Retrieve the current slider link value.
+    $slider_link = get_post_meta($post->ID, '_slider_link', true);
+    ?>
+    <div class="inside">
+        <div>
+            <input type="text" name="slider_link" value="<?php echo esc_attr($slider_link); ?>" style="width: 100%;" />
+            <p><?php _e('Enter the URL linked to the slider image, if any.', 'gwt-wordpress'); ?><br/>
+            <?php _e('To link internal paths, copy the permalink without the base URL. Example:', 'gwt-wordpress'); ?> <strong>/2017/10/03/article-link</strong><br/>
+            <?php _e('To link external paths, add http:// or https:// at the beginning of the URL. Example:', 'gwt-wordpress'); ?> <strong>http://example.com</strong></p>
+        </div>
     </div>
-
-  </div>
-  <?php
+    <?php
 }
 
 /**
- * Store custom field meta box data
+ * Save the meta box data.
  *
  * @param int $post_id The post ID.
- * @link https://codex.wordpress.org/Plugin_API/Action_Reference/save_post
  */
-function slider_link_save_meta_box_data( $post_id ){
-  // verify meta box nonce
-  if ( !isset( $_POST['slider_link_meta_box_nonce'] ) || !wp_verify_nonce( $_POST['slider_link_meta_box_nonce'], basename( __FILE__ ) ) ){
-    return;
-  }
-  // return if autosave
-  if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ){
-    return;
-  }
-  // Check the user's permissions.
-  if ( ! current_user_can( 'edit_post', $post_id ) ){
-    return;
-  }
+function efs_save_meta_box_data($post_id) {
+    // Verify nonce for security.
+    if (!isset($_POST['efs_slider_link_meta_box_nonce']) || !wp_verify_nonce($_POST['efs_slider_link_meta_box_nonce'], basename(__FILE__))) {
+        return;
+    }
 
-  if ( isset( $_REQUEST['slider_link'] ) ) {
-    update_post_meta( $post_id, '_slider_link', sanitize_text_field( $_POST['slider_link'] ) );
-  }
+    // Return if autosave.
+    if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+        return;
+    }
+
+    // Check user permissions.
+    if (!current_user_can('edit_post', $post_id)) {
+        return;
+    }
+
+    // Save the slider link.
+    if (isset($_REQUEST['slider_link'])) {
+        update_post_meta($post_id, '_slider_link', sanitize_text_field($_REQUEST['slider_link']));
+    }
 }
-add_action( 'save_post_slider-image', 'slider_link_save_meta_box_data' );
+add_action('save_post_' . EFS_CPT_TYPE, 'efs_save_meta_box_data');
 
-function slider_link_get_meta_box_data($post_id){
-    // @todo: format the url into proper url
+/**
+ * Retrieve and format the slider link.
+ *
+ * @param int $post_id The post ID.
+ * @return string The formatted slider link.
+ */
+function efs_get_meta_box_data($post_id) {
     $slider_link = get_post_meta($post_id, '_slider_link', true);
-    if($slider_link == ''){
+
+    // Default fallback.
+    if (empty($slider_link)) {
         return '#';
     }
 
-    if(substr($slider_link, 0, 7) == 'http://' || substr($slider_link, 0, 8) == 'https://'){
-        return $slider_link;
+    // Handle external URLs.
+    if (strpos($slider_link, 'http://') === 0 || strpos($slider_link, 'https://') === 0) {
+        return esc_url($slider_link);
     }
-    if(substr($slider_link, 0, 1) != '/'){
-        $slider_link = '/'.$slider_link;
-    }
-    return get_site_url().$slider_link;
-}
 
+    // Handle internal paths.
+    if (strpos($slider_link, '/') !== 0) {
+        $slider_link = '/' . $slider_link;
+    }
+
+    return esc_url(home_url($slider_link));
+}

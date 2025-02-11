@@ -1,70 +1,83 @@
 <?php
 /**
- * GWT back compat functionality
+ * Backward compatibility functionality for GWT.
  *
- * Prevents GWT from running on WordPress versions prior to 4.4,
- * since this theme is not meant to be backward compatible beyond that and
- * relies on many newer functions and markup changes introduced in 4.4.
+ * Prevents the theme from running on WordPress versions prior to 4.4,
+ * as this theme relies on newer features introduced in WordPress 4.4.
  *
- * @package GWT
- * @since Government Website Template 2.0
+ * @package GWT-WordPress
+ * @since 26.0.0
  */
 
+// Define the minimum required WordPress version.
+define('GWT_MIN_WP_VERSION', '4.4');
+
 /**
- * Prevent switching to GWT on old versions of WordPress.
+ * Prevent switching to GWT on unsupported WordPress versions.
  *
- * Switches to the default theme.
+ * Switches to the default theme and displays an admin notice.
  *
- * @since Government Website Template 2.0
+ * @since 26.0.0
  */
 function gwt_switch_theme() {
-	switch_theme( WP_DEFAULT_THEME, WP_DEFAULT_THEME );
-
-	unset( $_GET['activated'] );
-
-	add_action( 'admin_notices', 'gwt_upgrade_notice' );
+    switch_theme(WP_DEFAULT_THEME, WP_DEFAULT_THEME);
+    unset($_GET['activated']);
+    add_action('admin_notices', 'gwt_upgrade_notice');
 }
-add_action( 'after_switch_theme', 'gwt_switch_theme' );
+add_action('after_switch_theme', 'gwt_switch_theme');
 
 /**
- * Adds a message for unsuccessful theme switch.
+ * Display an admin notice for unsupported WordPress versions.
  *
- * Prints an update nag after an unsuccessful attempt to switch to
- * GWT on WordPress versions prior to 4.4.
- *
- * @since Government Website Template 2.0
- *
- * @global string $wp_version WordPress version.
+ * @since 26.0.0
  */
 function gwt_upgrade_notice() {
-	$message = sprintf( __( 'GWT requires at least WordPress version 4.4. You are running version %s. Please upgrade and try again.', 'gwt' ), $GLOBALS['wp_version'] );
-	printf( '<div class="error"><p>%s</p></div>', $message );
+    $current_version = $GLOBALS['wp_version'];
+    $message = sprintf(
+        /* translators: 1: Current WordPress version, 2: Minimum required WordPress version. */
+        esc_html__('GWT requires at least WordPress version %2$s. You are running version %1$s. Please upgrade WordPress to use this theme.', 'gwt-wordpress'),
+        esc_html($current_version),
+        esc_html(GWT_MIN_WP_VERSION)
+    );
+    printf('<div class="gwt-error"><p>%s</p></div>', $message);
 }
 
 /**
- * Prevents the Customizer from being loaded on WordPress versions prior to 4.4.
+ * Prevent loading the Customizer on unsupported WordPress versions.
  *
- * @since Government Website Template 2.0
- *
- * @global string $wp_version WordPress version.
+ * @since 26.0.0
  */
 function gwt_customize() {
-	wp_die( sprintf( __( 'GWT requires at least WordPress version 4.4. You are running version %s. Please upgrade and try again.', 'gwt' ), $GLOBALS['wp_version'] ), '', array(
-		'back_link' => true,
-	) );
+    $current_version = $GLOBALS['wp_version'];
+    wp_die(
+        sprintf(
+            /* translators: 1: Current WordPress version, 2: Minimum required WordPress version. */
+            esc_html__('GWT requires at least WordPress version %2$s. You are running version %1$s. Please upgrade WordPress to use this theme.', 'gwt-wordpress'),
+            esc_html($current_version),
+            esc_html(GWT_MIN_WP_VERSION)
+        ),
+        '',
+        ['back_link' => true]
+    );
 }
-add_action( 'load-customize.php', 'gwt_customize' );
+add_action('load-customize.php', 'gwt_customize');
 
 /**
- * Prevents the Theme Preview from being loaded on WordPress versions prior to 4.4.
+ * Prevent loading the Theme Preview on unsupported WordPress versions.
  *
- * @since Government Website Template 2.0
- *
- * @global string $wp_version WordPress version.
+ * @since 26.0.0
  */
 function gwt_preview() {
-	if ( isset( $_GET['preview'] ) ) {
-		wp_die( sprintf( __( 'GWT requires at least WordPress version 4.4. You are running version %s. Please upgrade and try again.', 'gwt' ), $GLOBALS['wp_version'] ) );
-	}
+    if (isset($_GET['preview'])) {
+        $current_version = $GLOBALS['wp_version'];
+        wp_die(
+            sprintf(
+                /* translators: 1: Current WordPress version, 2: Minimum required WordPress version. */
+                esc_html__('GWT requires at least WordPress version %2$s. You are running version %1$s. Please upgrade WordPress to use this theme.', 'gwt-wordpress'),
+                esc_html($current_version),
+                esc_html(GWT_MIN_WP_VERSION)
+            )
+        );
+    }
 }
-add_action( 'template_redirect', 'gwt_preview' );
+add_action('template_redirect', 'gwt_preview');

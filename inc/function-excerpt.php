@@ -1,12 +1,27 @@
 <?php
 /**
- * govph exerpt
+ * Customize the excerpt "Read More" link for GWT-WordPress.
  *
- * @package govph
+ * @package GWT-WordPress
+ * @since 26.0.0
  */
-// Replaces the excerpt "more" text by a link
-function new_excerpt_more($more) {
-  global $post;
-  return '<a class="moretag" href="'. get_permalink($post->ID) . '"> continue reading : '. get_the_title($post->ID) .' </a>';
+
+/**
+ * Replace the default excerpt "more" text with a custom link.
+ *
+ * @param string $more The default "more" text.
+ * @return string The modified "more" text with a custom link.
+ */
+function gwt_custom_excerpt_more($more) {
+    // Get the current post ID.
+    $post_id = get_the_ID();
+
+    // Generate the "Read More" link with proper escaping.
+    return sprintf(
+        '<a class="gwt-moretag" href="%s">%s: %s</a>',
+        esc_url(get_permalink($post_id)),
+        esc_html__('Continue reading', 'gwt-wordpress'),
+        esc_html(get_the_title($post_id))
+    );
 }
-add_filter('excerpt_more', 'new_excerpt_more');
+add_filter('excerpt_more', 'gwt_custom_excerpt_more');

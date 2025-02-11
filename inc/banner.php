@@ -1,128 +1,117 @@
-<?php 
-if (is_home()){
-	$banner_class = 'large-12';
-	$banner_2_class = '';
-	$banner_3_class = '';
-	if(is_active_sidebar('banner-section-1') && is_active_sidebar('banner-section-2')){
-		$banner_class = 'large-6 columns';
-		$banner_2_class = 'large-3 columns';
-		$banner_3_class = 'large-3 columns';
-	}
-	elseif(is_active_sidebar('banner-section-1') && !is_active_sidebar('banner-section-2')){
-		$banner_class = 'large-8 columns';
-		$banner_2_class = 'large-4 columns';
-	}
-	elseif(!is_active_sidebar('banner-section-1') && is_active_sidebar('banner-section-2')){
-		$banner_class = 'large-8 columns';
-		$banner_3_class = 'large-4 columns';
-	}
-    // Temporary commented as it need to show on mobile devices
-// $banner_class .= ' hide-for-small-only';
+<?php
+/**
+ * Banner template part for displaying banners, sliders, and titles.
+ *
+ * @package GWT-WordPress
+ * @since 26.0.0
+ */
+
+// Determine banner layout classes based on active sidebars.
+$banner_layout = [
+    'main' => 'gwt-large-12',
+    'section_1' => '',
+    'section_2' => '',
+];
+
+if (is_active_sidebar('banner-section-1') && is_active_sidebar('banner-section-2')) {
+    $banner_layout['main'] = 'gwt-large-6';
+    $banner_layout['section_1'] = 'gwt-large-3';
+    $banner_layout['section_2'] = 'gwt-large-3';
+} elseif (is_active_sidebar('banner-section-1') && !is_active_sidebar('banner-section-2')) {
+    $banner_layout['main'] = 'gwt-large-8';
+    $banner_layout['section_1'] = 'gwt-large-4';
+} elseif (!is_active_sidebar('banner-section-1') && is_active_sidebar('banner-section-2')) {
+    $banner_layout['main'] = 'gwt-large-8';
+    $banner_layout['section_2'] = 'gwt-large-4';
 }
 
-$container_class = '';
-$line_class = '';
-if(!is_home()){
-  $container_class = 'banner-pads';
-}else{
-	$line_class="line";
-}
+// Determine container and line classes.
+$container_class = is_home() ? '' : 'gwt-banner-pads';
+$line_class = is_home() ? 'gwt-line' : '';
 ?>
-<div id="auxiliary" class="show-for-large">
-    <div class="row">
-        <div class="small-12 large-12 columns toplayer">
-            <nav id="aux-main" class="nomargin show-for-medium-up" data-dropdown-content>
-                <ul class="dropdown menu" data-dropdown-menu>
-                    <?php 
-                        wp_nav_menu( 
-                            array(
-                                'theme_location'  => 'aux_nav', 
-                                'items_wrap' => '%3$s', 
-                                'container' => false, 
-                                'fallback_cb' => false, 
-                                'walker' => new Topbar_Nav_Menu() 
-                            )
-                        ); 
+<!-- Auxiliary Navigation -->
+<div id="gwt-auxiliary" class="gwt-show-for-large">
+    <div class="gwt-row">
+        <div class="gwt-small-12 gwt-large-12 gwt-columns gwt-toplayer">
+            <nav id="gwt-aux-main" class="gwt-nomargin gwt-show-for-medium-up" data-dropdown-content>
+                <ul class="gwt-dropdown gwt-menu" data-dropdown-menu>
+                    <?php
+                    wp_nav_menu([
+                        'theme_location' => 'aux_nav',
+                        'items_wrap' => '%3$s',
+                        'container' => false,
+                        'fallback_cb' => false,
+                        'walker' => new Topbar_Nav_Menu(),
+                    ]);
                     ?>
                 </ul>
             </nav>
         </div>
     </div>
 </div>
-<!-- banner -->
-<div class="container-banner <?php echo $container_class; ?>">
-    <?php govph_displayoptions( 'govph_slider_start' ); ?>
-    <?php if (is_home()): ?>
-    <?php if($banner_slider = efs_get_slider()): ?>
-    <?php if(govph_displayoptions( 'govph_slider_full' ) == 'active'): ?>
-    <!-- For GWT 26.0.0 remove class hide-for-small-only after large-12 on id="banner-slider" to show slider image on mobile devices -->
-    <div id="banner-slider" class="large-12 ">
-        <?php else: ?>
-        <div id="banner-slider" class="<?php echo $banner_class ?>">
-            <?php endif; ?>
-            <?php echo $banner_slider ?>
-        </div>
+
+<!-- Banner Section -->
+<div class="gwt-container-banner <?php echo esc_attr($container_class); ?>">
+    <?php govph_displayoptions('govph_slider_start'); ?>
+
+    <?php if (is_home()) : ?>
+        <!-- Slider -->
+        <?php if ($banner_slider = efs_get_slider()) : ?>
+            <div id="gwt-banner-slider" class="<?php echo esc_attr($banner_layout['main']); ?>">
+                <?php echo $banner_slider; ?>
+            </div>
         <?php endif; ?>
 
-        <?php if(is_active_sidebar('banner-section-1')): ?>
-        <div id="banner-section-1" class="<?php echo $banner_2_class ?>">
-            <?php do_action( 'before_sidebar' ); ?>
-            <?php dynamic_sidebar( 'banner-section-1' ) ?>
-        </div>
+        <!-- Banner Section 1 -->
+        <?php if (is_active_sidebar('banner-section-1')) : ?>
+            <div id="gwt-banner-section-1" class="<?php echo esc_attr($banner_layout['section_1']); ?>">
+                <?php do_action('before_sidebar'); ?>
+                <?php dynamic_sidebar('banner-section-1'); ?>
+            </div>
         <?php endif; ?>
 
-        <?php if(is_active_sidebar('banner-section-2')): ?>
-        <div id="banner-section-2" class="<?php echo $banner_3_class ?>">
-            <?php do_action( 'before_sidebar' ); ?>
-            <?php dynamic_sidebar( 'banner-section-2' ) ?>
-        </div>
+        <!-- Banner Section 2 -->
+        <?php if (is_active_sidebar('banner-section-2')) : ?>
+            <div id="gwt-banner-section-2" class="<?php echo esc_attr($banner_layout['section_2']); ?>">
+                <?php do_action('before_sidebar'); ?>
+                <?php dynamic_sidebar('banner-section-2'); ?>
+            </div>
         <?php endif; ?>
 
-        <?php else: ?>
-        <?php if (is_404()): ?>
-        <?php govph_displayoptions( 'govph_banner_title_start' ); ?>
-        <div class="large-9 columns container-main">
+    <?php else : ?>
+        <!-- Page-Specific Titles -->
+        <?php govph_displayoptions('govph_banner_title_start'); ?>
+        <div class="gwt-large-9 gwt-columns gwt-container-main">
             <header>
-                <h1 class="page-title"><?php _e( 'Oops! That page can&rsquo;t be found.', 'gwt_wp' ); ?></h1>
+                <?php if (is_404()) : ?>
+                    <h1 class="gwt-page-title"><?php esc_html_e('Oops! That page can&rsquo;t be found.', 'gwt-wordpress'); ?></h1>
+                <?php elseif (is_search()) : ?>
+                    <h1 class="gwt-page-title">
+                        <?php
+                        printf(
+                            /* translators: %s: Search query. */
+                            esc_html__('Search Results for: %s', 'gwt-wordpress'),
+                            '<span>' . get_search_query() . '</span>'
+                        );
+                        ?>
+                    </h1>
+                <?php elseif (is_archive()) : ?>
+                    <h1 class="gwt-page-title"><?php the_archive_title(); ?></h1>
+                <?php else : ?>
+                    <?php while (have_posts()) : the_post(); ?>
+                        <h1 class="gwt-entry-title"><?php the_title(); ?></h1>
+                    <?php endwhile; ?>
+                <?php endif; ?>
             </header>
         </div>
-        <?php govph_displayoptions( 'govph_banner_title_end' ); ?>
-        <?php elseif (is_search()): ?>
-        <?php govph_displayoptions( 'govph_banner_title_start' ); ?>
-        <div class="large-9 columns container-main">
-            <header>
-                <h1 class="page-title">
-                    <?php printf( __( 'Search Results for: %s', 'gwt_wp' ), '<span>' . get_search_query() . '</span>' ); ?>
-                </h1>
-            </header>
-        </div>
-        <?php govph_displayoptions( 'govph_banner_title_end' ); ?>
-        <?php elseif (is_archive()): ?>
-        <?php govph_displayoptions( 'govph_banner_title_start' ); ?>
-        <div class="large-9 columns container-main">
+        <?php govph_displayoptions('govph_banner_title_end'); ?>
+    <?php endif; ?>
 
-        </div>
-        <?php govph_displayoptions( 'govph_banner_title_end' ); ?>
-        <?php else: ?>
-        <?php govph_displayoptions( 'govph_banner_title_start' ); ?>
-        <!-- For Version 2 -->
-        <div class="large-9 columns container-main">
-            <header>
-                <?php while ( have_posts() ) : the_post(); ?>
-                <h1 class="entry-title"><?php the_title(); ?></h1>
-                <?php endwhile; // end of the loop. ?>
-            </header>
-        </div>
-        <!-- End For Version 2-->
-        <?php govph_displayoptions( 'govph_banner_title_end' ); ?>
-        <?php endif ?>
-        <?php endif ?>
+    <?php govph_displayoptions('govph_slider_end'); ?>
+</div>
 
-        <?php govph_displayoptions( 'govph_slider_end' ); ?>
+<!-- Separator Line -->
+<span class="<?php echo esc_attr($line_class); ?>"></span>
 
-    </div>
-    <!-- This is for line as a separator after slider image -->
-    <span class="<?php echo $line_class; ?>"> </span>
-    <!-- end of line class as a separator -->
-
-    <?php include_once('breadcrumbs.php'); ?>
+<!-- Breadcrumbs -->
+<?php include_once('breadcrumbs.php'); ?>

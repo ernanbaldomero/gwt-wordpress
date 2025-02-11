@@ -1,23 +1,32 @@
 <?php
 /**
- * The template part for displaying page content
+ * Template part for displaying page content.
  *
- * @package GWT
- * @since Government Website Template 2.0
+ * @package GWT-WordPress
+ * @since 26.0.0
  */
 ?>
+<article id="post-<?php the_ID(); ?>" <?php post_class('gwt-page'); ?> aria-labelledby="page-title-<?php the_ID(); ?>">
+    <!-- Page Title -->
+    <header class="gwt-page-header">
+        <h1 id="page-title-<?php the_ID(); ?>" class="gwt-page-title">
+            <?php the_title(); ?>
+        </h1>
+    </header>
 
-<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-
-    <!-- entry-content -->
-    <div class="entry-content">
-        <?php the_content();  ?>
+    <!-- Page Content -->
+    <div class="gwt-entry-content">
         <?php
-			wp_link_pages( array(
-				'before' => '<div class="page-links">' . __( 'Pages:', 'gwt_wp' ),
-				'after'  => '</div>',
-			) );
-		?>
-    </div>
+        // Display the page content.
+        the_content();
 
+        // Paginate long pages.
+        wp_link_pages([
+            'before' => '<nav class="gwt-page-links" aria-label="' . esc_attr__('Page Navigation', 'gwt-wordpress') . '">' . __('Pages:', 'gwt-wordpress'),
+            'after'  => '</nav>',
+            'link_before' => '<span class="gwt-page-link">',
+            'link_after'  => '</span>',
+        ]);
+        ?>
+    </div>
 </article>

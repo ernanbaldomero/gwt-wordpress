@@ -1,15 +1,23 @@
 <?php
 /**
- * @file
- * breadcrumb file template
+ * Breadcrumbs template part for displaying breadcrumb navigation.
+ *
+ * @package GWT-WordPress
+ * @since 26.0.0
  */
-// TODO: add a widget that can replace the default breadcrumb
-?>
 
-<nav id="breadcrumbs" class="anchor" aria-label="You are here:" role="navigation">
-	<div class="row">
-		<div class="large-12 columns">
-    		<?php gwt_wp_breadcrumb(); ?>
-		</div>
-	</div>
+// Check if breadcrumbs are enabled or available.
+if (!function_exists('gwt_wp_breadcrumb') || !gwt_wp_breadcrumb()) {
+    return; // Exit early if no breadcrumbs are available.
+}
+?>
+<nav id="gwt-breadcrumbs" class="gwt-anchor" aria-label="<?php esc_attr_e('Breadcrumb Navigation', 'gwt-wordpress'); ?>">
+    <div class="gwt-row">
+        <div class="gwt-large-12 gwt-columns">
+            <?php
+            // Display the breadcrumb navigation.
+            gwt_wp_breadcrumb();
+            ?>
+        </div>
+    </div>
 </nav>

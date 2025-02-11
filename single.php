@@ -9,44 +9,41 @@
 get_header();
 include_once('inc/banner.php');
 ?>
-<?php govph_displayoptions( 'govph_panel_top' ); ?>
 
-<div id="main-content" class="container-main" role="document">
+<?php
+if ( function_exists( 'govph_displayoptions' ) ) {
+    govph_displayoptions( 'govph_panel_top' );
+}
+?>
+
+<div id="main-content" class="container-main" role="main" itemscope itemtype="https://schema.org/Article">
     <div class="row">
-        <div id="content" class="text-justify <?php govph_displayoptions( 'govph_content_position' ); ?>columns"
-            role="main">
-            <!-- for Version 1 -->
-            <!-- <div div class="large-12 container-main">
-                <header>
-                    <?php while ( have_posts() ) : the_post(); ?>
-                    <h1 class="entry-title"><?php the_title(); ?></h1>
-                    <?php endwhile; // end of the loop. ?>
-                </header>
-            </div> -->
-            <!-- End for Version 1 -->
-            <?php 
-				while( have_posts() ) : the_post();
-				
-				get_template_part('template-parts/content', 'single');
-				
-				endwhile; //end of the loop 
-			?>
-        </div><!-- end content -->
+        <div id="content" class="text-justify <?php govph_displayoptions( 'govph_content_position' ); ?> columns" role="main">
+            <?php
+            while ( have_posts() ) : the_post();
+                get_template_part( 'template-parts/content', 'single' );
+            endwhile; // End of the loop.
+            ?>
+        </div><!-- #content -->
 
-        <?php 
-		if(is_active_sidebar('left-sidebar')){
-			govph_displayoptions( 'govph_sidebar_left' );
-		}
-		?>
-        <?php 
-		if(is_active_sidebar('right-sidebar')){
-			govph_displayoptions( 'govph_sidebar_right' );
-		}
-		?>
+        <?php if ( is_active_sidebar( 'left-sidebar' ) ) : ?>
+            <div id="left-sidebar" class="sidebar" role="complementary">
+                <?php dynamic_sidebar( 'left-sidebar' ); ?>
+            </div>
+        <?php endif; ?>
 
-    </div><!-- end row -->
-</div><!-- end main -->
+        <?php if ( is_active_sidebar( 'right-sidebar' ) ) : ?>
+            <div id="right-sidebar" class="sidebar" role="complementary">
+                <?php dynamic_sidebar( 'right-sidebar' ); ?>
+            </div>
+        <?php endif; ?>
+    </div><!-- .row -->
+</div><!-- #main-content -->
 
-<?php govph_displayoptions( 'govph_panel_bottom' ); ?>
+<?php
+if ( function_exists( 'govph_displayoptions' ) ) {
+    govph_displayoptions( 'govph_panel_bottom' );
+}
+?>
 
 <?php get_footer(); ?>
